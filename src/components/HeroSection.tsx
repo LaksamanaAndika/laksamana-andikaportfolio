@@ -2,41 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { ArrowDown, ArrowUpRight, Video, Camera, Award, ShieldCheck, Upload, CheckCircle2, Sparkles, Sliders } from 'lucide-react';
 import { HERO_DATA, SOCIAL_CONNECT_DATA } from '../data/portfolioData';
-import { getOriginalImage, saveOriginalImage } from '../utils/imageStore';
-import { PhotoSyncModal } from './PhotoSyncModal';
 
 export const HeroSection: React.FC = () => {
   // Parallax mouse position
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
 
   // Original photo handling with storage fallback
-  const [currentImgSrc, setCurrentImgSrc] = useState<string>(HERO_DATA.heroImage);
+  const [currentImgSrc, setCurrentImgSrc] = useState<string>("/images/LAKSAMANA_ANDIKA_ORIGINAL_PHOTO.png");
   const [imgErrorCount, setImgErrorCount] = useState(0);
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Load from IndexedDB / localStorage on mount
-  useEffect(() => {
-    async function loadSaved() {
-      const saved = await getOriginalImage('hero_png');
-      if (saved) {
-        setCurrentImgSrc(saved);
-      }
-    }
-    loadSaved();
-
-    const handleUpdate = (e: Event) => {
-      const custom = e as CustomEvent<{ key: string; dataUrl: string }>;
-      if (custom.detail?.key === 'hero_png') {
-        setCurrentImgSrc(custom.detail.dataUrl);
-      }
-    };
-
-    window.addEventListener('andika_image_updated', handleUpdate);
-    return () => window.removeEventListener('andika_image_updated', handleUpdate);
-  }, []);
 
   // Interactive parallax tracking
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
